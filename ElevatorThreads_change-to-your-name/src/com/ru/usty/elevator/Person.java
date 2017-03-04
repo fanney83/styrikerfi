@@ -5,6 +5,7 @@ public class Person implements Runnable {
 	
 	int scourceFloor, destinationFloor;
 	
+	
 	public Person(int scourceFloor, int destinationFloor) {
 		this.scourceFloor = scourceFloor;
 		this.destinationFloor = destinationFloor;
@@ -16,9 +17,11 @@ public class Person implements Runnable {
 		try {
 			
 			//person appears and start waiting at its source floor
-			ElevatorScene.scene.incrementNumberOfPeopleWaitingAtFloor(this.scourceFloor);
 			
 			//Elevator needs peace to clear up before take-off no interruption from persons
+			ElevatorScene.scene.incrementNumberOfPeopleWaitingAtFloor(this.scourceFloor);
+			
+			while(ElevatorScene.isInCritical){};
 			ElevatorScene.elevatorWaitMutex.acquire(); //wait
 			
 				 ElevatorScene.semaphoreIN[scourceFloor].acquire();
@@ -30,6 +33,7 @@ public class Person implements Runnable {
 			System.out.println("Person-thread released..!");
 			
 			//person thread is inside the elevator so increase number
+			
 			
 			ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
 			

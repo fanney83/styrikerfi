@@ -24,6 +24,8 @@ public class ElevatorScene {
 	public static ElevatorScene scene;
 	
 	public static boolean elevatorsMayDie;
+	public static boolean isInCritical = false; //when in critical section person can't acquire()
+
 	
 	//TO SPEED THINGS UP WHEN TESTING,
 	//feel free to change this.  It will be changed during grading
@@ -50,6 +52,7 @@ public class ElevatorScene {
 	public void restartScene(int numberOfFloors, int numberOfElevators) {
 		//semaphore is born initialized locked
 		elevatorsMayDie = true;
+		
 		
 		if(elevatorThread != null) {
 			if(elevatorThread.isAlive()){
@@ -83,6 +86,7 @@ public class ElevatorScene {
 		personCountMutex = new Semaphore(1);
 		elevatorWaitMutex = new Semaphore(1);
 		floorCountMutex = new Semaphore(1);
+		exitedCountMutex = new Semaphore(1);
 		//semaphore1 = new Semaphore(0);
 		
 		
@@ -118,10 +122,10 @@ public class ElevatorScene {
 
 		//add an elevator thread + start
 		
-		System.out.println("Elevator a GOGO\n");
 		elevatorThread  = new Thread(new Elevator());
 		elevatorThread.start();
 		
+		System.out.println("Elevator a GOGO\n");
 		
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
@@ -140,7 +144,6 @@ public class ElevatorScene {
 		for(int i = 0; i < getNumberOfFloors(); i++) {
 			this.exitedCount.add(0);
 		}
-		exitedCountMutex = new Semaphore(1);
 	}
 
 	//Base function: definition must not change
@@ -167,6 +170,7 @@ public class ElevatorScene {
 		return thread;  //this means that the testSuite will not wait for the threads to finish
 	}
 
+	
 	//Base function: definition must not change, but add your code
 	public int getCurrentFloorForElevator(int elevator) {
 
