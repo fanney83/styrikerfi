@@ -15,21 +15,31 @@ public class Person implements Runnable {
 	public void run() {
 		try {
 			
-			//auka semaphora sem við köllum á acquire fyrir og release strax á eftir
-			ElevatorScene.elevatorWaitMutex.acquire();
+			//person appears and start waiting at its source floor
+			ElevatorScene.scene.incrementNumberOfPeopleWaitingAtFloor(this.scourceFloor);
 			
-				 ElevatorScene.semaphore1.acquire(); // wait
+			//Elevator needs peace to clear up before take-off no interruption from persons
+			ElevatorScene.elevatorWaitMutex.acquire(); //wait
+			
+				 ElevatorScene.semaphoreIN[scourceFloor].acquire();
 			
 			ElevatorScene.elevatorWaitMutex.release();
-
+			
+			ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(scourceFloor);
+			
+			System.out.println("Person-thread released..!");
+			
+			//person thread is inside the elevator so increase number
+			
+			ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
+			
+			System.out.println("number of people waiting on floor " + scourceFloor + ": " + ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(this.scourceFloor));
 		
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(scourceFloor);
+		} 	
 		
-		System.out.println("Person-thread released..!");
 	}
 
 }
