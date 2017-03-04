@@ -201,23 +201,40 @@ public class ElevatorScene {
 		}
 		
 	public void incrementNumberOfPeopleInElevator(int elevator) {
+		try {
+			elevatorWaitMutex.acquire();
+				numberOfPeopleInElevator++;
+			elevatorWaitMutex.release();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
 	
 	public void decrementNumberOfPeopleInElevator(int elevator) {
-		
+		try {
+			elevatorWaitMutex.acquire();
+				numberOfPeopleInElevator--;
+			elevatorWaitMutex.release();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//Base function: definition must not change, but add your code
 	public int getNumberOfPeopleInElevator(int elevator) {
 		
 		//dumb code, replace it!
-		switch(elevator) {
+		/*switch(elevator) {
 		case 1: return 1;
 		case 2: return 4;
 		default: return 3;
-		}
+		}*/
+		
+		return numberOfPeopleInElevator;
 	}
 	
 	//Base function: definition must not change, but add your code
