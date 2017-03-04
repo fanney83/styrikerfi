@@ -13,11 +13,21 @@ public class Elevator implements Runnable {
 				return;			
 			}
 			
-			int numOfPeopleInElevator = (6 - ElevatorScene.scene.numberOfPeopleInElevator);
-			
-			for(int i = 0; i < numOfPeopleInElevator; i++) {
+			int freeSpaceInElevator = (6 - ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+			System.out.println("numberOfPeopleInElevator: "+ ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+			System.out.println("freeSpaceInElevator: "+ freeSpaceInElevator);
+			for(int i = 0; i < freeSpaceInElevator; i++) {
 				
 				ElevatorScene.semaphoreIN[ElevatorScene.floorCount].release();
+				System.out.println("semaphoreIN value for floor: "+ ElevatorScene.floorCount + ": " + 
+						ElevatorScene.semaphoreIN[ElevatorScene.floorCount]);
+			}
+			
+			//Elevator thread sleeps
+			try {
+				Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		
 		}
