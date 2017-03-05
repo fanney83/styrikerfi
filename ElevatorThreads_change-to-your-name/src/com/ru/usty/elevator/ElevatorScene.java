@@ -33,7 +33,6 @@ public class ElevatorScene {
 	public static int numberOfPeopleInElevator = 0;
 	public static int floorCount = 0;
 	public static boolean addPersonToWaitLine;
-	public static int[] numPersonsGoingOutAtDestination;
 	
 	ArrayList<Integer> personCount;
 	ArrayList<Integer> exitedCount = null;
@@ -82,11 +81,8 @@ public class ElevatorScene {
 		elevatorThread  = new Thread(new Elevator());
 		elevatorThread.start();
 		
-		System.out.println("Elevator a GOGO\n");
-		
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
-		numPersonsGoingOutAtDestination = new int[numberOfFloors];
 		elevatorCountMutex = new Semaphore(1);
 
 
@@ -111,8 +107,6 @@ public class ElevatorScene {
 		// person thread made and started
 		Thread thread = new Thread(new Person(sourceFloor, destinationFloor));
 		thread.start();
-
-		//incrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 		
 		return thread;  //this means that the testSuite will not wait for the threads to finish
 	}
@@ -199,33 +193,6 @@ public class ElevatorScene {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	// how many people are going out at certain destination floor
-	public int numPersonsGoingOutAtDestination(int floor) {
-		return ElevatorScene.numPersonsGoingOutAtDestination[floor];
-	}
-	
-	// decrement count for people with certain destination
-	public void decrementNumPersonsGoingOutAtDestination(int floor){		
-		try {
-			ElevatorScene.personOutCountMutex.acquire();
-				numPersonsGoingOutAtDestination[floor]--;
-			ElevatorScene.personOutCountMutex.release();			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}		
-	}
-	
-	// increment count for people with certain destination
-	public void incrementNumPersonsGoingOutAtDestination(int floor){
-		try {
-			ElevatorScene.personOutCountMutex.acquire();
-				numPersonsGoingOutAtDestination[floor]++;
-			ElevatorScene.personOutCountMutex.release();			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}		
 	}
 	
 	//Base function: definition must not change, but add your code if needed

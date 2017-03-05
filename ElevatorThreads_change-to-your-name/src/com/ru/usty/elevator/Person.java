@@ -13,13 +13,12 @@ public class Person implements Runnable {
 	@Override
 	public void run() {
 		try {
-			// do nothing if elevator is in it's critical session
+			// do nothing if elevator is NOT in it's critical session
 			while(!ElevatorScene.elevatorInCS){}
 			
-			//person appears and start waiting at its source floor
+			//person appears and starts waiting at its source floor
 			ElevatorScene.scene.incrementNumberOfPeopleWaitingAtFloor(this.sourceFloor);
-			
-			//while(ElevatorScene.isInCritical){};
+
 			//ElevatorScene.elevatorWaitMutex.acquire(); //wait
 			
 			//person acquires access to elevator
@@ -29,7 +28,6 @@ public class Person implements Runnable {
 			ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(this.sourceFloor);
 		
 			ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
-			ElevatorScene.scene.incrementNumPersonsGoingOutAtDestination(this.destinationFloor);
 			
 			System.out.println("number of people waiting on floor " + sourceFloor + ": " + ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(this.sourceFloor));
 			
@@ -37,7 +35,6 @@ public class Person implements Runnable {
 			ElevatorScene.semaphoreOut[this.destinationFloor].acquire();
 			
 			ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
-			ElevatorScene.scene.decrementNumPersonsGoingOutAtDestination(this.destinationFloor);
 			
 			ElevatorScene.scene.personExitsAtFloor(this.destinationFloor);
 			
