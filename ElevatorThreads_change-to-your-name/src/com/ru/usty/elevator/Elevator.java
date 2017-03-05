@@ -33,19 +33,19 @@ public class Elevator implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				}
-			if( elevatorGoingUp == true) {
-				if(ElevatorScene.scene.getCurrentFloorForElevator(0) != ElevatorScene.scene.getNumberOfFloors())
-					ElevatorScene.scene.incrementElevatorAtFloor(0);
-				else
-					elevatorGoingUp = false;
-					ElevatorScene.scene.decrementElevatorAtFloor(0);
+	
+			if(ElevatorScene.scene.getCurrentFloorForElevator(0) == (ElevatorScene.scene.getNumberOfFloors() - 1)) {
+				elevatorGoingUp = false;
 			}
-			else if (elevatorGoingUp != true){
-				if(ElevatorScene.scene.getCurrentFloorForElevator(0) > 0)
-					ElevatorScene.scene.decrementElevatorAtFloor(0);
-				else
-					elevatorGoingUp = true;
-					ElevatorScene.scene.incrementElevatorAtFloor(0);
+			else if(ElevatorScene.scene.getCurrentFloorForElevator(0) == 0) { 
+				elevatorGoingUp = true; 
+			}
+				
+			if(elevatorGoingUp == true) {
+				ElevatorScene.scene.incrementElevatorAtFloor(0);
+			}
+			else {
+				ElevatorScene.scene.decrementElevatorAtFloor(0);
 			}
 		
 		//ElevatorScene.isInCritical = false; //now a person can acquire 

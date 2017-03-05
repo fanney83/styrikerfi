@@ -38,7 +38,7 @@ public class ElevatorScene {
 	private Thread elevatorThread = null;
 
 	public static int numberOfPeopleInElevator = 0;
-	public static int floorCount;
+	public static int floorCount = 0;
 	public static boolean addPersonToWaitLine;
 	
 
@@ -176,6 +176,7 @@ public class ElevatorScene {
 
 	// What floor is the elevator at
 	public int getCurrentFloorForElevator(int elevator) {
+		System.out.println("gettingCurrentFloorFoElevator" + elevator + ": " + floorCount);
 		return floorCount;
 	}
 	//elevator goes down a floor
@@ -196,6 +197,7 @@ public class ElevatorScene {
 		
 		try {
 			ElevatorScene.floorCountMutex.acquire();
+			System.out.println("incrementing floorCount in ElevatorScene!");
 				floorCount++;
 			ElevatorScene.floorCountMutex.release();
 		} catch (InterruptedException e) {
@@ -206,14 +208,6 @@ public class ElevatorScene {
 
 	// How many persons are inside an elevator
 	public int getNumberOfPeopleInElevator(int elevator) {
-		
-		//dumb code, replace it!
-		/*switch(elevator) {
-		case 1: return 1;
-		case 2: return 4;
-		default: return 3;
-		}*/
-
 		return numberOfPeopleInElevator;
 	}
 	
