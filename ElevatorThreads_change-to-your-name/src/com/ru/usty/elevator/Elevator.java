@@ -4,10 +4,9 @@ public class Elevator implements Runnable {
 	
 	
 	//private static int currFloor;
-	
-	
-	
-	
+	boolean elevatorGoingUp = true;
+
+
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -15,25 +14,41 @@ public class Elevator implements Runnable {
 			if(ElevatorScene.elevatorsMayDie){
 				return;			
 			}
-			System.out.println("ElevatorScene.scene.numberOfPeopleInElevator: " + ElevatorScene.numberOfPeopleInElevator);
-			int numOfPeopleInElevator = (6 - ElevatorScene.numberOfPeopleInElevator);
-			
-			System.out.println("number of people in elevator: " +  numOfPeopleInElevator + "\n");
-			
-			ElevatorScene.isInCritical = true; //person can't acquire atm
-			for(int i = 0; i < numOfPeopleInElevator; i++) {
-				try {
-					ElevatorScene.elevatorWaitMutex.acquire();
-						ElevatorScene.semaphoreIN[ElevatorScene.floorCount].release();
-					ElevatorScene.elevatorWaitMutex.release();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				System.out.println("ElevatorScene.scene.numberOfPeopleInElevator: " + ElevatorScene.numberOfPeopleInElevator);
+				System.out.println("Curr Floor: " + ElevatorScene.scene.getCurrentFloorForElevator(0)+ "\n");
+	
+				int freeSpaceInElevator = (6 - ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+				System.out.println("numberOfPeopleInElevator: "+ ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+				System.out.println("freeSpaceInElevator: "+ freeSpaceInElevator);
+				for(int i = 0; i < freeSpaceInElevator; i++) {
+					
+					ElevatorScene.semaphoreIN[ElevatorScene.floorCount].release();
+					System.out.println("semaphoreIN value for floor: "+ ElevatorScene.floorCount + ": " + 
+							ElevatorScene.semaphoreIN[ElevatorScene.floorCount]);
 				}
 				
+				//Elevator thread sleeps
+			try {
+				Thread.sleep(ElevatorScene.VISUALIZATION_WAIT_TIME);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				}
+			if( elevatorGoingUp == true) {
+				if(ElevatorScene.scene.getCurrentFloorForElevator(0) != ElevatorScene.scene.getNumberOfFloors())
+					ElevatorScene.scene.incrementElevatorAtFloor(0);
+				else
+					elevatorGoingUp = false;
+					ElevatorScene.scene.decrementElevatorAtFloor(0);
 			}
-			
-			ElevatorScene.isInCritical = false; //now a person can acquire 
+			else if (elevatorGoingUp != true){
+				if(ElevatorScene.scene.getCurrentFloorForElevator(0) > 0)
+					ElevatorScene.scene.decrementElevatorAtFloor(0);
+				else
+					elevatorGoingUp = true;
+					ElevatorScene.scene.incrementElevatorAtFloor(0);
+			}
+		
+		//ElevatorScene.isInCritical = false; //now a person can acquire 
 
 		
 		}
