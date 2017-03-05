@@ -5,7 +5,6 @@ public class Person implements Runnable {
 	
 	int sourceFloor, destinationFloor;
 	
-
 	public Person(int sourceFloor, int destinationFloor) {
 		this.sourceFloor = sourceFloor;
 		this.destinationFloor = destinationFloor;
@@ -16,26 +15,32 @@ public class Person implements Runnable {
 		try {
 			
 			//person appears and start waiting at its source floor
-
-			//Elevator needs peace to clear up before take-off no interruption from persons
 			ElevatorScene.scene.incrementNumberOfPeopleWaitingAtFloor(this.sourceFloor);
 			
 			//while(ElevatorScene.isInCritical){};
 			//ElevatorScene.elevatorWaitMutex.acquire(); //wait
-				//person acquires access to elevator
-			ElevatorScene.semaphoreIN[sourceFloor].acquire();
+			
+			//person acquires access to elevator
+			ElevatorScene.semaphoreIN[this.sourceFloor].acquire();
 			//ElevatorScene.elevatorWaitMutex.release();
 			
-			ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(sourceFloor);
-			
-			System.out.println("Person-thread released..!");
+			ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(this.sourceFloor);
 		
 			ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
+			ElevatorScene.scene.incrementNumPersonsGoingOutAtDestination(this.destinationFloor);
 			
 			System.out.println("number of people waiting on floor " + sourceFloor + ": " + ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(this.sourceFloor));
-		
+			
+			// acquire access out of elevator
+			ElevatorScene.semaphoreOut[this.destinationFloor].acquire();
+			
+			ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
+			ElevatorScene.scene.decrementNumPersonsGoingOutAtDestination(this.destinationFloor);
+			
+			ElevatorScene.scene.personExitsAtFloor(this.destinationFloor);
+			
+			
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 	
 		
