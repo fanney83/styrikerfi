@@ -13,6 +13,8 @@ public class Person implements Runnable {
 	@Override
 	public void run() {
 		try {
+			// do nothing if elevator is in it's critical session
+			while(!ElevatorScene.elevatorInCS){}
 			
 			//person appears and start waiting at its source floor
 			ElevatorScene.scene.incrementNumberOfPeopleWaitingAtFloor(this.sourceFloor);

@@ -1,8 +1,8 @@
 package com.ru.usty.elevator;
 
 public class Elevator implements Runnable {
-	
-	boolean elevatorGoingUp = true;
+	public static int goneOut = 0;
+	public static boolean elevatorGoingUp = true;
 
 	@Override
 	public void run() {
@@ -27,6 +27,9 @@ public class Elevator implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				}
+			
+			// CRITICAL SESSION, persons cannot acquire in the meantime
+			ElevatorScene.elevatorInCS = true;
 			
 			// acquire semaphore times free-space so that the can be released again
 			// in case all spaces were not filled while semaphores released for ghosts.
@@ -61,10 +64,13 @@ public class Elevator implements Runnable {
 				e.printStackTrace();
 				}
 			
-			int personsGoingOut = (6 - ElevatorScene.scene.numPersonsGoingOutAtDestination(
+			int personsGoingOut = (ElevatorScene.scene.numPersonsGoingOutAtDestination(
 								   ElevatorScene.scene.getCurrentFloorForElevator(0)));
 			
-			for(int i = 0; i < personsGoingOut; i++) {		
+			// releasing persons out to their destination floor
+			for(int i = 0; i < personsGoingOut; i++) {	
+				goneOut += personsGoingOut;
+				System.out.println("personsGoneOut: " + goneOut);
 				ElevatorScene.semaphoreOut[ElevatorScene.scene.getCurrentFloorForElevator(0)].release();
 			}
 			
@@ -75,8 +81,6 @@ public class Elevator implements Runnable {
 				e.printStackTrace();
 				}
 		
-		//ElevatorScene.isInCritical = false; //now a person can acquire 
-
 		
 		}
 		

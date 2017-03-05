@@ -19,7 +19,7 @@ public class ElevatorScene {
 	public static ElevatorScene scene;
 	
 	public static boolean elevatorsMayDie;
-	public static boolean isInCritical = false; //when in critical section person can't acquire()
+	public static boolean elevatorInCS = false; //when in critical section person can't acquire()
 
 	//TO SPEED THINGS UP WHEN TESTING,
 	//feel free to change this.  It will be changed during grading
@@ -55,7 +55,7 @@ public class ElevatorScene {
 		
 		elevatorsMayDie = false;
 		
-		addPersonToWaitLine = true;
+		elevatorInCS = true;
 		floorCount = 0;
 		scene = this;	
 		this.numberOfFloors = numberOfFloors;
@@ -112,14 +112,13 @@ public class ElevatorScene {
 		Thread thread = new Thread(new Person(sourceFloor, destinationFloor));
 		thread.start();
 
-		incrementNumberOfPeopleWaitingAtFloor(sourceFloor);
+		//incrementNumberOfPeopleWaitingAtFloor(sourceFloor);
 		
 		return thread;  //this means that the testSuite will not wait for the threads to finish
 	}
 
 	// What floor is the elevator at
 	public int getCurrentFloorForElevator(int elevator) {
-		System.out.println("gettingCurrentFloorFoElevator" + elevator + ": " + floorCount);
 		return floorCount;
 	}
 	//elevator goes down a floor
@@ -210,9 +209,9 @@ public class ElevatorScene {
 	// decrement count for people with certain destination
 	public void decrementNumPersonsGoingOutAtDestination(int floor){		
 		try {
-			personOutCountMutex.acquire();
-				ElevatorScene.numPersonsGoingOutAtDestination[floor]--;
-			personOutCountMutex.release();			
+			ElevatorScene.personOutCountMutex.acquire();
+				numPersonsGoingOutAtDestination[floor]--;
+			ElevatorScene.personOutCountMutex.release();			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}		
@@ -221,9 +220,9 @@ public class ElevatorScene {
 	// increment count for people with certain destination
 	public void incrementNumPersonsGoingOutAtDestination(int floor){
 		try {
-			personOutCountMutex.acquire();
-				ElevatorScene.numPersonsGoingOutAtDestination[floor]++;
-			personOutCountMutex.release();			
+			ElevatorScene.personOutCountMutex.acquire();
+				numPersonsGoingOutAtDestination[floor]++;
+			ElevatorScene.personOutCountMutex.release();			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}		
