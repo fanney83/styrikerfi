@@ -1,9 +1,12 @@
 package com.ru.usty.elevator;
 
 public class Elevator implements Runnable {
-	public static int goneOut = 0;
-	public static boolean elevatorGoingUp = true;
-	public static int freeSpaceInElevator = 0;
+	public boolean elevatorGoingUp = true;
+	public int elevatorNumber;
+	
+	public Elevator(int elevatorNumber) {
+		this.elevatorNumber = elevatorNumber;
+	}
 	
 	@Override
 	public void run() {
@@ -28,7 +31,7 @@ public class Elevator implements Runnable {
 	
 	public void allAboard() {
 		// define how many releases are possible
-		freeSpaceInElevator = (6 - ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+		int freeSpaceInElevator = (6 - ElevatorScene.scene.getNumberOfPeopleInElevator(this.elevatorNumber));
 		
 		for(int i = 0; i < freeSpaceInElevator; i++) {				
 			ElevatorScene.semaphoreIN[ElevatorScene.floorCount].release();
@@ -42,7 +45,7 @@ public class Elevator implements Runnable {
 		
 		// acquire semaphore times free-space so that they can be released again
 		// in case all spaces were not filled while semaphores released for ghosts.
-		freeSpaceInElevator = (6 - ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+		freeSpaceInElevator = (6 - ElevatorScene.scene.getNumberOfPeopleInElevator(this.elevatorNumber));
 		for(int i = 0; i < freeSpaceInElevator; i++) {		
 			try {
 				ElevatorScene.semaphoreIN[ElevatorScene.floorCount].acquire();
@@ -54,18 +57,18 @@ public class Elevator implements Runnable {
 	
 	public void elevatorMove() {
 		// if the elevator is on top floor, goingUp becomes false
-		if(ElevatorScene.scene.getCurrentFloorForElevator(0) == (ElevatorScene.scene.getNumberOfFloors() - 1)) {
+		if(ElevatorScene.scene.getCurrentFloorForElevator(this.elevatorNumber) == (ElevatorScene.scene.getNumberOfFloors() - 1)) {
 			elevatorGoingUp = false;
 		}
-		else if(ElevatorScene.scene.getCurrentFloorForElevator(0) == 0) { 
+		else if(ElevatorScene.scene.getCurrentFloorForElevator(this.elevatorNumber) == 0) { 
 			elevatorGoingUp = true; 
 		}
 			
 		if(elevatorGoingUp == true) {
-			ElevatorScene.scene.incrementElevatorAtFloor(0);
+			ElevatorScene.scene.incrementElevatorAtFloor(this.elevatorNumber);
 		}
 		else {
-			ElevatorScene.scene.decrementElevatorAtFloor(0);
+			ElevatorScene.scene.decrementElevatorAtFloor(this.elevatorNumber);
 		}
 		
 		// CRITICAL SESSION, persons cannot acquire in the meantime
@@ -85,7 +88,7 @@ public class Elevator implements Runnable {
 		elevatorSleeps();
 		
 		// in case not everyone got out at last stop, get number of people still inside
-		int peopleInElevator = (ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+		int peopleInElevator = (ElevatorScene.scene.getNumberOfPeopleInElevator(this.elevatorNumber));
 		
 		// acquire semaphore times people so that they can be released again.
 		for(int i = 0; i < peopleInElevator; i++) {		

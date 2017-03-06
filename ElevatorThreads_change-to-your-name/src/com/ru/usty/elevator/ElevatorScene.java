@@ -72,7 +72,7 @@ public class ElevatorScene {
 		floorCountMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
 		
-		elevatorThread  = new Thread(new Elevator());
+		elevatorThread  = new Thread(new Elevator(numberOfElevators-1));
 		elevatorThread.start();
 		
 		this.numberOfFloors = numberOfFloors;
