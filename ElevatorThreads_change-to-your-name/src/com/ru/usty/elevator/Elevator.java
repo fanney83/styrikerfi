@@ -37,10 +37,10 @@ public class Elevator implements Runnable {
 		//Elevator thread sleeps
 		elevatorSleeps();
 		
-		// CRITICAL SESSION, persons cannot acquire in the meantime
+		// Elevator not in critical session
 		ElevatorScene.elevatorInCS = false;
 		
-		// acquire semaphore times free-space so that the can be released again
+		// acquire semaphore times free-space so that they can be released again
 		// in case all spaces were not filled while semaphores released for ghosts.
 		freeSpaceInElevator = (6 - ElevatorScene.scene.getNumberOfPeopleInElevator(0));
 		for(int i = 0; i < freeSpaceInElevator; i++) {		
@@ -79,18 +79,16 @@ public class Elevator implements Runnable {
 		// releasing persons out to their destination floor
 		for(int i = 0; i < 6; i++) {				
 			ElevatorScene.semaphoreOut[ElevatorScene.floorCount].release();
-			System.out.println("semaphoreOut value for floor: "+ ElevatorScene.floorCount + ": " + 
-					ElevatorScene.semaphoreOut[ElevatorScene.floorCount]);
 		}
 		
 		//Elevator thread sleeps
 		elevatorSleeps();
 		
-		// Define free space again in case not everyone got out at last stop
-		freeSpaceInElevator = (ElevatorScene.scene.getNumberOfPeopleInElevator(0));
+		// in case not everyone got out at last stop, get number of people still inside
+		int peopleInElevator = (ElevatorScene.scene.getNumberOfPeopleInElevator(0));
 		
-		// acquire semaphore times free-space so that the can be released again.
-		for(int i = 0; i < freeSpaceInElevator; i++) {		
+		// acquire semaphore times people so that they can be released again.
+		for(int i = 0; i < peopleInElevator; i++) {		
 			try {
 				ElevatorScene.semaphoreOut[ElevatorScene.floorCount].acquire();
 			} catch (InterruptedException e) {

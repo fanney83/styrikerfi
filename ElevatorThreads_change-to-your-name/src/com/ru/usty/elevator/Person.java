@@ -29,20 +29,15 @@ public class Person implements Runnable {
 		
 			ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
 			
-			System.out.println("number of people waiting on floor " + sourceFloor + ": " + ElevatorScene.scene.getNumberOfPeopleWaitingAtFloor(this.sourceFloor));
-			
 			// acquire access out of elevator
 			ElevatorScene.semaphoreOut[this.destinationFloor].acquire();
 			
 			ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
 			
-			ElevatorScene.scene.personExitsAtFloor(this.destinationFloor);
-			
+			ElevatorScene.scene.personExitsAtFloor(this.destinationFloor);			
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} 	
-		
+		} 			
 	}
-
 }

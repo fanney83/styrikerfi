@@ -8,15 +8,11 @@ public class ElevatorScene {
 	//Semaphores that are accessible from anywhere
 	public static Semaphore[] semaphoreIN;
 	public static Semaphore[] semaphoreOut;
-	public static Semaphore personCountMutex;
-	
+	public static Semaphore personCountMutex;	
 	//public static Semaphore elevatorWaitMutex;
 	public static Semaphore floorCountMutex;	// keeping track of floor status
 	public static Semaphore elevatorCountMutex; // for counting inside elevator
-	public static Semaphore personOutCountMutex;
 	public static Semaphore exitedCountMutex;
-	
-	public static ElevatorScene scene;
 	
 	public static boolean elevatorsMayDie;
 	public static boolean elevatorInCS = false; //when in critical section person can't acquire()
@@ -27,12 +23,11 @@ public class ElevatorScene {
 
 	private int numberOfFloors;
 	private int numberOfElevators;
-	
-	private Thread elevatorThread = null;
-
 	public static int numberOfPeopleInElevator = 0;
 	public static int floorCount = 0;
-	public static boolean addPersonToWaitLine;
+	
+	private Thread elevatorThread = null;
+	public static ElevatorScene scene;
 	
 	ArrayList<Integer> personCount;
 	ArrayList<Integer> exitedCount = null;
@@ -73,7 +68,6 @@ public class ElevatorScene {
 		}
 		
 		personCountMutex = new Semaphore(1);
-		personOutCountMutex = new Semaphore(1);
 		//elevatorWaitMutex = new Semaphore(1);
 		floorCountMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
@@ -84,7 +78,6 @@ public class ElevatorScene {
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
 		elevatorCountMutex = new Semaphore(1);
-
 
 		personCount = new ArrayList<Integer>();
 		for(int i = 0; i < numberOfFloors; i++) {
@@ -103,7 +96,6 @@ public class ElevatorScene {
 	}
 
 	public Thread addPerson(int sourceFloor, int destinationFloor) {
-		System.out.println("adding Person with values(" + sourceFloor + " , " + destinationFloor + ")");
 		// person thread made and started
 		Thread thread = new Thread(new Person(sourceFloor, destinationFloor));
 		thread.start();
@@ -122,7 +114,6 @@ public class ElevatorScene {
 				floorCount--; // critical session, mutex for safe counting
 			ElevatorScene.floorCountMutex.release();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -131,7 +122,6 @@ public class ElevatorScene {
 	public void incrementElevatorAtFloor(int elevator) {		
 		try {
 			ElevatorScene.floorCountMutex.acquire();
-			System.out.println("incrementing floorCount in ElevatorScene!");
 				floorCount++;
 			ElevatorScene.floorCountMutex.release();
 		} catch (InterruptedException e) {
