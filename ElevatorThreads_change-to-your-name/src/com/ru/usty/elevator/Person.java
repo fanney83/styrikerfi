@@ -3,11 +3,12 @@ package com.ru.usty.elevator;
 //class Person implements the interface Runnable
 public class Person implements Runnable {
 	
-	int sourceFloor, destinationFloor;
+	int sourceFloor, destinationFloor, elevator;
 	
 	public Person(int sourceFloor, int destinationFloor) {
 		this.sourceFloor = sourceFloor;
 		this.destinationFloor = destinationFloor;
+		this.elevator = 0;
 	}
 		
 	@Override
@@ -19,18 +20,17 @@ public class Person implements Runnable {
 			//person appears and starts waiting at its source floor
 			ElevatorScene.scene.incrementNumberOfPeopleWaitingAtFloor(this.sourceFloor);
 
-			//ElevatorScene.elevatorWaitMutex.acquire(); //wait
+			this.elevator = ElevatorScene.scene.whatElevator;
 			
 			//person acquires access to elevator
-			ElevatorScene.semaphoreIN[this.sourceFloor].acquire();
-			//ElevatorScene.elevatorWaitMutex.release();
+			ElevatorScene.semaphoreIN[this.elevator][this.sourceFloor].acquire();
 			
 			ElevatorScene.scene.decrementNumberOfPeopleWaitingAtFloor(this.sourceFloor);
 		
 			ElevatorScene.scene.incrementNumberOfPeopleInElevator(0);
 			
 			// acquire access out of elevator
-			ElevatorScene.semaphoreOut[this.destinationFloor].acquire();
+			ElevatorScene.semaphoreOut[Elevator.num][this.destinationFloor].acquire();
 			
 			ElevatorScene.scene.decrementNumberOfPeopleInElevator(0);
 			

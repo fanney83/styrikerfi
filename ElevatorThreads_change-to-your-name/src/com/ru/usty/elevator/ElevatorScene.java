@@ -6,10 +6,10 @@ import java.util.concurrent.Semaphore;
 public class ElevatorScene {
 	
 	//Semaphores that are accessible from anywhere
-	public static Semaphore[] semaphoreIN;
-	public static Semaphore[] semaphoreOut;
+	public static Semaphore[][] semaphoreIN;
+	public static Semaphore[][] semaphoreOut;
 	public static Semaphore personCountMutex;	
-	//public static Semaphore elevatorWaitMutex;
+	public static Semaphore elevatorWaitMutex;
 	public static Semaphore floorCountMutex;	// keeping track of floor status
 	public static Semaphore elevatorCountMutex; // for counting inside elevator
 	public static Semaphore exitedCountMutex;
@@ -25,6 +25,7 @@ public class ElevatorScene {
 	private int numberOfElevators;
 	public static int numberOfPeopleInElevator = 0;
 	public static int floorCount = 0;
+	public int whatElevator = 0;
 	
 	private Thread elevatorThread = null;
 	public static ElevatorScene scene;
@@ -55,25 +56,31 @@ public class ElevatorScene {
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
 		
-		semaphoreIN = new Semaphore[numberOfFloors];
-		semaphoreOut = new Semaphore[numberOfFloors];
+		semaphoreIN = new Semaphore[numberOfElevators][numberOfFloors];
+		semaphoreOut = new Semaphore[numberOfElevators][numberOfFloors];
 		
 		// initialize semaphores on each floor with 0
-		for(int i = 0; i < numberOfFloors; i++) {
-			semaphoreIN[i] =  new Semaphore(0);		
+		for(int i = 0; i < numberOfElevators; i++) {
+			for(int j = 0; j < numberOfFloors; j++) {
+				semaphoreIN[i][j] =  new Semaphore(0);
+			}
 		}
 		
-		for(int i = 0; i < numberOfFloors; i++) {
-			semaphoreOut[i] =  new Semaphore(0);
+		for(int i = 0; i < numberOfElevators; i++) {
+			for(int j = 0; j < numberOfFloors; j++) {
+				semaphoreOut[i][j] =  new Semaphore(0);	
+			}
 		}
 		
 		personCountMutex = new Semaphore(1);
-		//elevatorWaitMutex = new Semaphore(1);
+		elevatorWaitMutex = new Semaphore(1);
 		floorCountMutex = new Semaphore(1);
 		exitedCountMutex = new Semaphore(1);
 		
-		elevatorThread  = new Thread(new Elevator(numberOfElevators-1));
-		elevatorThread.start();
+		for (int i = 0; i < numberOfElevators; i++) {
+            elevatorThread = new Thread(new Elevator(i));
+            elevatorThread.start();
+        }
 		
 		this.numberOfFloors = numberOfFloors;
 		this.numberOfElevators = numberOfElevators;
