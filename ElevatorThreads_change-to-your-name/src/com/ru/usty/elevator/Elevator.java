@@ -79,8 +79,10 @@ public class Elevator implements Runnable {
 	}
 	
 	public void getOut() {
+		// number of people possibly getting out
+		int peopleInElevator = (ElevatorScene.scene.getNumberOfPeopleInElevator(this.elevatorNumber));
 		// releasing persons out to their destination floor
-		for(int i = 0; i < 6; i++) {				
+		for(int i = 0; i < peopleInElevator; i++) {				
 			ElevatorScene.semaphoreOut[ElevatorScene.floorCount].release();
 		}
 		
@@ -88,7 +90,7 @@ public class Elevator implements Runnable {
 		elevatorSleeps();
 		
 		// in case not everyone got out at last stop, get number of people still inside
-		int peopleInElevator = (ElevatorScene.scene.getNumberOfPeopleInElevator(this.elevatorNumber));
+		peopleInElevator = (ElevatorScene.scene.getNumberOfPeopleInElevator(this.elevatorNumber));
 		
 		// acquire semaphore times people so that they can be released again.
 		for(int i = 0; i < peopleInElevator; i++) {		
